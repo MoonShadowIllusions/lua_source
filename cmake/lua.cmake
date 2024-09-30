@@ -1,0 +1,21 @@
+function(add_lua version)
+    set(BASE_DIR src/${version})
+    set(LUA "${BASE_DIR}/lua.c")
+    set(LUAC "${BASE_DIR}/luac.c")
+    set(LUALIB_NAME "lual-${version}")
+    set(LUA_NAME "lua-${version}")
+    set(LUAC_NAME "luac-${version}")
+    
+    aux_source_directory(${BASE_DIR} LUA_SRC)
+    list(REMOVE_ITEM LUA_SRC ${LUALIB} ${LUAC})
+    
+    add_library(${LUALIB_NAME} STATIC ${LUA_SRC})
+    target_link_libraries(${LUALIB_NAME} m)
+    add_executable(${LUA_NAME} ${LUA})
+    add_executable(${LUAC_NAME} ${LUAC})
+    target_link_libraries(${LUA_NAME} ${LUALIB_NAME})
+    target_link_libraries(${LUAC_NAME} ${LUALIB_NAME})
+
+    set_property(TARGET ${LUA_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY lua)
+    set_property(TARGET ${LUAC_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY lua)
+endfunction()
